@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using SkillTree.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,8 @@ namespace SkillTree.Tests
         [Test]
         public void Skill_NewSkill()
         {
-            Skill skill = new Skill("skill");
+            ILevelFormula formula = new MockLevelFormula();
+            Skill skill = new Skill("skill", formula);
             Assert.AreEqual("skill", skill.name);
             Assert.AreEqual(0, skill.records.Count);
             Assert.AreEqual(0, skill.parents.Count);
@@ -20,11 +22,139 @@ namespace SkillTree.Tests
         [Test]
         public void Skill_AddParent()
         {
-            Skill child = new Skill("child");
-            Skill parent = new Skill("parent");
+            ILevelFormula formula = new MockLevelFormula();
+            Skill child = new Skill("child", formula);
+            Skill parent = new Skill("parent", formula);
 
-            //Assert.AreEqual
             child.AddParent(parent);
+            Assert.AreSame(parent, child.parents[0]);
+            child.AddParent(parent);
+            Assert.AreEqual(1, child.parents.Count);
+        }
+
+        [Test]
+        public void Skill_AncestoryContains()
+        {
+            ILevelFormula formula = new MockLevelFormula();
+            Skill child = new Skill("child", formula);
+            Skill parent = new Skill("parent", formula);
+            Skill otherParent = new Skill("otherParent", formula);
+            Skill grandparent = new Skill("grandparent", formula);
+            Skill uncle = new Skill("uncle", formula);
+
+            child.AddParent(parent);
+            parent.AddParent(grandparent);
+            uncle.AddParent(grandparent);
+            Assert.IsTrue(child.AncestryContains(grandparent));
+            Assert.IsFalse(child.AncestryContains(uncle));
+            otherParent.AddParent(grandparent);
+            child.AddParent(otherParent);
+            Assert.IsTrue(child.AncestryContains(grandparent));
+        }
+
+        [Test]
+        public void Skill_PreventCircularParents()
+        {
+            ILevelFormula formula = new MockLevelFormula();
+            Skill child = new Skill("child", formula);
+            Skill parent = new Skill("parent", formula);
+            Skill grandparent = new Skill("grandparent", formula);
+
+            child.AddParent(parent);
+            Assert.False(parent.AddParent(child));
+            Assert.AreEqual(0, parent.parents.Count);
+            parent.AddParent(grandparent);
+            Assert.False(grandparent.AddParent(child));
+        }
+
+        [Test]
+        public void Skill_IsChildOf()
+        {
+            ILevelFormula formula = new MockLevelFormula();
+            Skill child = new Skill("child", formula);
+            Skill parent = new Skill("parent", formula);
+            Skill uncle = new Skill("uncle", formula);
+
+            child.AddParent(parent);
+            Assert.True(child.IsChildOf(parent));
+            Assert.False(child.IsChildOf(uncle));
+        }
+
+        [Test]
+        public void Skill_AddRecord()
+        {
+            ILevelFormula formula = new MockLevelFormula();
+            Skill skill = new Skill("skill", formula);
+            Skill otherSkill = new Skill("otherSkill", formula);
+            Record record = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
+            Record record2 = new Record(DateTime.Today, 20f, new List<Skill>() { skill }, skill);
+            skill.AddRecords(new List<Record>() { record, record2 });
+            Assert.True(skill.records.Contains(record));
+            Assert.True(skill.records.Contains(record2));
+            Assert.AreEqual(2, skill.records.Count);
+            Record otherRecord = new Record(DateTime.Today, 10f, new List<Skill>() { otherSkill }, otherSkill);
+            skill.AddRecords(new List<Record>() { otherRecord });
+            Assert.AreEqual(2, skill.records.Count);
+            skill.AddRecords(new List<Record>() { record });
+            Assert.AreEqual(2, skill.records.Count);
+        }
+
+        [Test]
+        public void Skill_Total()
+        {
+            Skill skill = BuildTestSkill();
+            Assert.AreEqual(175f, skill.Total());
+        }
+
+        [Test]
+        public void Skill_Level()
+        {
+            Skill skill = BuildTestSkill();
+            Assert.AreEqual(18, skill.Level());
+        }
+
+        [Test]
+        public void Skill_LevelProgress()
+        {
+            Skill skill = BuildTestSkill();
+            Assert.AreEqual(5, skill.LevelProgress());
+        }
+
+        [Test]
+        public void Skill_LevelRequirement()
+        {
+            Skill skill = BuildTestSkill();
+            Assert.AreEqual(180, skill.LevelCompletionRequirement());
+        }
+
+        private bool fired;
+
+        [Test]
+        public void Skill_FireOnUpdated()
+        {
+            fired = false;
+
+            ILevelFormula formula = new MockLevelFormula();
+            Skill skill = new Skill("skill", formula);
+            skill.OnUpdated += () => { fired = true; };
+            Record r1 = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
+            skill.AddRecords(new List<Record>() { r1 });
+            Assert.IsTrue(fired);
+            fired = false;
+            skill.RemoveRecord(r1);
+            Assert.IsTrue(fired);
+        }
+
+        private Skill BuildTestSkill()
+        {
+            ILevelFormula formula = new MockLevelFormula();
+            Skill skill = new Skill("skill", formula);
+            Assert.AreEqual(0, skill.Total());
+            Record r1 = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
+            Record r2 = new Record(DateTime.Today, 45f, new List<Skill>() { skill }, skill);
+            Record r3 = new Record(DateTime.Today, 120f, new List<Skill>() { skill }, skill);
+            skill.AddRecords(new List<Record>() { r1, r2, r3 });
+            return skill;
         }
     }
 }

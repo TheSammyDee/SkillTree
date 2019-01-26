@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,19 +10,19 @@ namespace SkillTree.Model
     public class Skill
     {
         public string guid { get; private set; }
-
-        private string _name;
         public string name { get; set; }
         public Color color { get; set; }
         public List<Skill> parents { get; private set; }
         public List<Record> records { get; private set; }
+        public ILevelFormula formula { get; set; }
 
-        public UnityAction OnSkillUpdated;
+        public UnityAction OnUpdated;
 
-        public Skill(string name)
+        public Skill(string name, ILevelFormula formula)
         {
             guid = Guid.NewGuid().ToString();
             this.name = name;
+            this.formula = formula;
             parents = new List<Skill>();
             records = new List<Record>();
             color = Color.white;
@@ -35,17 +36,33 @@ namespace SkillTree.Model
             this.parents = parents;
         }
 
+        public Skill(string guid, string name, ILevelFormula formula, Color color, List<Skill> parents)
+        {
+            this.guid = guid;
+            this.name = name;
+            this.formula = formula;
+            this.color = color;
+            this.parents = parents;
+        }
+
         /// <summary>
         /// Adds the given <see cref="Skill"/> to this Skill's list of
-        /// parents, if it is not already in the list.
+        /// parents and returns True, if it is not already in the list, 
+        /// and if this Skill is not an ancestor of the given Skill. 
+        /// Otherwise returns false;
         /// </summary>
         /// <param name="skill"></param>
-        public void AddParent(Skill skill)
+        /// <returns>True if the Skill is added</returns>
+        public bool AddParent(Skill skill)
         {
-            if (!parents.Contains(skill))
+            // TODO: use hashset here?
+            if (!IsChildOf(skill) && !skill.AncestryContains(this))
             {
                 parents.Add(skill);
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>
@@ -55,10 +72,7 @@ namespace SkillTree.Model
         /// <param name="skill"></param>
         public void RemoveParent(Skill skill)
         {
-            if (parents.Contains(skill))
-            {
-                parents.Remove(skill);
-            }
+            parents.Remove(skill);
         }
 
         /// <summary>
@@ -72,34 +86,113 @@ namespace SkillTree.Model
             return (parents.Contains(skill));
         }
 
+        /// <summary>
+        /// Returns true if the given <see cref="Skill"/> is an ancestor
+        /// of this Skill.
+        /// </summary>
+        /// <param name="skill"></param>
+        /// <returns></returns>
+        public bool AncestryContains(Skill skill)
+        {
+            if (parents.Count == 0)
+            {
+                return false;
+            }
+            else if (IsChildOf(skill))
+            {
+                return true;
+            }
+            else
+            {
+                foreach (Skill parent in parents)
+                {
+                    if (parent.AncestryContains(skill))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        // TODO: Figure this shit out between hashsets and lists
+        // and single or multiple add and firing events
+
+        /// <summary>
+        /// Adds the given <see cref="Record"/> to this <see cref="Skill"/>'s 
+        /// list of records, if this Record contains a reference to this Skill
+        /// and if it does not already exist in the list.
+        /// </summary>
+        /// <param name="record"></param>
         public void AddRecord(Record record)
         {
-
+            // TODO: use hashset here?
+            if (!records.Contains(record) && record.skills.Contains(this))
+            {
+                records.Add(record);
+            }
         }
 
+        public void AddRecords(List<Record> records)
+        {
+            foreach (Record record in records)
+            {
+                AddRecord(record);
+            }
+
+            if (OnUpdated != null)
+                OnUpdated();
+        }
+
+        // TODO: Make remove like add
         public void RemoveRecord(Record record)
         {
+            records.Remove(record);
 
+            if (OnUpdated != null)
+                OnUpdated();
         }
 
+        // TODO: Store total for reuse
+
+        /// <summary>
+        /// Returns the total value accruded in this <see cref="Skill"/>
+        /// </summary>
+        /// <returns></returns>
         public float Total()
         {
-            return 0;
+            return records.Sum(x => x.amount);
         }
 
+        // TODO: Improve efficiency here with repeated calculations
+
+        /// <summary>
+        /// Returns the current level of this <see cref="Skill"/>
+        /// </summary>
+        /// <returns></returns>
         public int Level()
         {
-            return 0;
+            return formula.Level(Total());
         }
 
+        /// <summary>
+        /// Returns the value accrued since reaching the current level
+        /// </summary>
+        /// <returns></returns>
         public float LevelProgress()
         {
-            return 0;
+            return formula.LevelProgress(Total());
         }
 
-        public float LevelRequirement()
+        /// <summary>
+        /// Returns the value required to complete the current level
+        /// and reach the next level
+        /// </summary>
+        /// <returns></returns>
+        public float LevelCompletionRequirement()
         {
-            return 0;
+            return formula.LevelCompletionRequirement(Level());
         }
     }
 }
