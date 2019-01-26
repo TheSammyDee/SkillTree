@@ -9,13 +9,11 @@ namespace SkillTree.Model
         bool AddSkill(Skill skill);
         bool UpdateSkill(Skill skill);
         bool DeleteSkill(Skill skill);
-        HashSet<Skill> GetAllSkills();
+        Dictionary<string, Skill> GetAllSkills();
 
         bool AddRecord(Record record);
         bool UpdateRecord(Record record);
         bool DeleteRecord(Record record);
-        HashSet<Record> GetAllRecords();
-
-        Dictionary<string, HashSet<string>> GetRecordSkillMappings();
+        Dictionary<string, Record> GetAllRecords();
     }
 }

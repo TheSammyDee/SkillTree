@@ -12,7 +12,7 @@ namespace SkillTree.Model
         public string guid { get; private set; }
         public string name { get; set; }
         public Color color { get; set; }
-        public List<Skill> parents { get; private set; }
+        public HashSet<Skill> parents { get; private set; }
         public List<Record> records { get; private set; }
         public ILevelFormula formula { get; set; }
 
@@ -23,26 +23,28 @@ namespace SkillTree.Model
             guid = Guid.NewGuid().ToString();
             this.name = name;
             this.formula = formula;
-            parents = new List<Skill>();
+            parents = new HashSet<Skill>();
             records = new List<Record>();
             color = Color.white;
         }
 
-        public Skill(string guid, string name, Color color, List<Skill> parents)
+        public Skill(string guid, string name, Color color, HashSet<Skill> parents)
         {
             this.guid = guid;
             this.name = name;
             this.color = color;
             this.parents = parents;
+            records = new List<Record>();
         }
 
-        public Skill(string guid, string name, ILevelFormula formula, Color color, List<Skill> parents)
+        public Skill(string guid, string name, ILevelFormula formula, Color color, HashSet<Skill> parents)
         {
             this.guid = guid;
             this.name = name;
             this.formula = formula;
             this.color = color;
             this.parents = parents;
+            records = new List<Record>();
         }
 
         /// <summary>
@@ -55,11 +57,9 @@ namespace SkillTree.Model
         /// <returns>True if the Skill is added</returns>
         public bool AddParent(Skill skill)
         {
-            // TODO: use hashset here?
-            if (!IsChildOf(skill) && !skill.AncestryContains(this))
+            if (!skill.AncestryContains(this))
             {
-                parents.Add(skill);
-                return true;
+                return parents.Add(skill);
             }
 
             return false;
@@ -114,6 +114,19 @@ namespace SkillTree.Model
 
                 return false;
             }
+        }
+
+        public HashSet<Skill> Ancestors()
+        {
+            HashSet<Skill> ancestors = new HashSet<Skill>();
+            ancestors.UnionWith(parents);
+
+            foreach (Skill parent in parents)
+            {
+                ancestors.UnionWith(parent.Ancestors());
+            }
+
+            return ancestors;
         }
 
         // TODO: Figure this shit out between hashsets and lists

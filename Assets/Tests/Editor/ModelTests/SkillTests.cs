@@ -3,6 +3,7 @@ using SkillTree.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SkillTree.Tests
@@ -27,7 +28,7 @@ namespace SkillTree.Tests
             Skill parent = new Skill("parent", formula);
 
             child.AddParent(parent);
-            Assert.AreSame(parent, child.parents[0]);
+            Assert.AreSame(parent, child.parents.First());
             child.AddParent(parent);
             Assert.AreEqual(1, child.parents.Count);
         }
@@ -86,13 +87,13 @@ namespace SkillTree.Tests
             ILevelFormula formula = new MockLevelFormula();
             Skill skill = new Skill("skill", formula);
             Skill otherSkill = new Skill("otherSkill", formula);
-            Record record = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
-            Record record2 = new Record(DateTime.Today, 20f, new List<Skill>() { skill }, skill);
+            Record record = new Record(DateTime.Today, 10f, skill);
+            Record record2 = new Record(DateTime.Today, 20f, skill);
             skill.AddRecords(new List<Record>() { record, record2 });
             Assert.True(skill.records.Contains(record));
             Assert.True(skill.records.Contains(record2));
             Assert.AreEqual(2, skill.records.Count);
-            Record otherRecord = new Record(DateTime.Today, 10f, new List<Skill>() { otherSkill }, otherSkill);
+            Record otherRecord = new Record(DateTime.Today, 10f, otherSkill);
             skill.AddRecords(new List<Record>() { otherRecord });
             Assert.AreEqual(2, skill.records.Count);
             skill.AddRecords(new List<Record>() { record });
@@ -137,7 +138,7 @@ namespace SkillTree.Tests
             ILevelFormula formula = new MockLevelFormula();
             Skill skill = new Skill("skill", formula);
             skill.OnUpdated += () => { fired = true; };
-            Record r1 = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
+            Record r1 = new Record(DateTime.Today, 10f, skill);
             skill.AddRecords(new List<Record>() { r1 });
             Assert.IsTrue(fired);
             fired = false;
@@ -150,9 +151,9 @@ namespace SkillTree.Tests
             ILevelFormula formula = new MockLevelFormula();
             Skill skill = new Skill("skill", formula);
             Assert.AreEqual(0, skill.Total());
-            Record r1 = new Record(DateTime.Today, 10f, new List<Skill>() { skill }, skill);
-            Record r2 = new Record(DateTime.Today, 45f, new List<Skill>() { skill }, skill);
-            Record r3 = new Record(DateTime.Today, 120f, new List<Skill>() { skill }, skill);
+            Record r1 = new Record(DateTime.Today, 10f, skill);
+            Record r2 = new Record(DateTime.Today, 45f, skill);
+            Record r3 = new Record(DateTime.Today, 120f, skill);
             skill.AddRecords(new List<Record>() { r1, r2, r3 });
             return skill;
         }

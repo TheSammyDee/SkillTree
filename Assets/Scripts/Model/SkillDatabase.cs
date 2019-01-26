@@ -143,7 +143,7 @@ namespace SkillTree.Model
                     _reader.GetString(0),
                     _reader.GetString(1),
                     new Color(_reader.GetFloat(2), _reader.GetFloat(3), _reader.GetFloat(4)),
-                    new List<Skill>());
+                    new HashSet<Skill>());
 
                 skills.Add(skill);
             }
