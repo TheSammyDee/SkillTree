@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.Events;
 
 namespace SkillTree.Model
 {
     public class SkillCollection
     {
-        ISkillsDataSource dataSource;
-        Dictionary<string, Skill> skills;
-        Dictionary<string, Record> records;
-        ILevelFormula formula;
+        private ISkillsDataSource dataSource;
+        public Dictionary<string, Skill> skills { get; private set; }
+        private Dictionary<string, Record> records;
+        private ILevelFormula formula;
+
+        public event Action<Skill> OnSkillAdded;
 
         public SkillCollection(ISkillsDataSource dataSource, ILevelFormula formula)
         {
@@ -49,6 +52,9 @@ namespace SkillTree.Model
             }
 
             dataSource.AddSkill(newSkill);
+
+            if (OnSkillAdded != null)
+                OnSkillAdded(newSkill);
         }
 
         public void AddRecord(DateTime date, float amount, Skill skill)
