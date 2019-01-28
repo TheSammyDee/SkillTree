@@ -1,14 +1,21 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeInput : MonoBehaviour {
+public class TimeInputViewModel : MonoBehaviour
+{
 
     [SerializeField]
     UnityEngine.UI.Text timerText;
 
     [SerializeField]
     GameObject ui;
+
+    public event Action<string> OnNumberClick;
+    public event Action OnBackspaceClick;
+    public event Action OnCancelClick;
+    public event Action OnAcceptClick;
 
     // Use this for initialization
     void Start () {
@@ -41,6 +48,30 @@ public class TimeInput : MonoBehaviour {
     public void Show() {
         ClearTimer();
         ui.SetActive(true);
+    }
+
+    public void OnNumberClickInternal(string numString)
+    {
+        if (OnNumberClick != null)
+            OnNumberClick(numString);
+    }
+
+    public void OnBackspaceClickInternal()
+    {
+        if (OnBackspaceClick != null)
+            OnBackspaceClick();
+    }
+
+    public void OnCancelClickInternal()
+    {
+        if (OnCancelClick != null)
+            OnCancelClick();
+    }
+
+    public void OnAcceptClickInternal()
+    {
+        if (OnAcceptClick != null)
+            OnAcceptClick();
     }
 
     private void ClearTimer() {

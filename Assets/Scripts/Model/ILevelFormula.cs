@@ -8,6 +8,7 @@ namespace SkillTree.Model
     {
         int Level(float total);
         float LevelProgress(float total);
+        float LevelCompletionRequirementTotal(int level);
         float LevelCompletionRequirement(int level);
     }
 }

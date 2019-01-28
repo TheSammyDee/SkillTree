@@ -16,7 +16,7 @@ namespace SkillTree.Model
         public List<Record> records { get; private set; }
         public ILevelFormula formula { get; set; }
 
-        public UnityAction OnUpdated;
+        public UnityAction OnAmountUpdated;
 
         public Skill(string name, ILevelFormula formula)
         {
@@ -144,6 +144,9 @@ namespace SkillTree.Model
             if (!records.Contains(record) && record.skills.Contains(this))
             {
                 records.Add(record);
+
+                if (OnAmountUpdated != null)
+                    OnAmountUpdated();
             }
         }
 
@@ -154,8 +157,8 @@ namespace SkillTree.Model
                 AddRecord(record);
             }
 
-            if (OnUpdated != null)
-                OnUpdated();
+            if (OnAmountUpdated != null)
+                OnAmountUpdated();
         }
 
         // TODO: Make remove like add
@@ -163,8 +166,8 @@ namespace SkillTree.Model
         {
             records.Remove(record);
 
-            if (OnUpdated != null)
-                OnUpdated();
+            if (OnAmountUpdated != null)
+                OnAmountUpdated();
         }
 
         // TODO: Store total for reuse
@@ -203,6 +206,11 @@ namespace SkillTree.Model
         /// and reach the next level
         /// </summary>
         /// <returns></returns>
+        public float LevelCompletionRequirementTotal()
+        {
+            return formula.LevelCompletionRequirementTotal(Level());
+        }
+
         public float LevelCompletionRequirement()
         {
             return formula.LevelCompletionRequirement(Level());

@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeInputManager : MonoBehaviour {
+// Timer classes pulled from old system
+// TODO: redo timer classes
+public class TimeInputManager {
 
-    [SerializeField]
-    TimeInput timeInput;
+    private TimeInputViewModel timeInput;
 
     private string timeString;
     public delegate void AcceptDelegate(int num);
@@ -14,12 +15,18 @@ public class TimeInputManager : MonoBehaviour {
     private Action onCancel;
     private int timeNum;
 
-	// Use this for initialization
-	void Start () {
+    public TimeInputManager(TimeInputViewModel timeInput, Canvas canvas)
+    {
+        this.timeInput = timeInput;
+        timeInput.gameObject.transform.SetParent(canvas.transform, false);
+        timeInput.OnNumberClick += AddToTimeString;
+        timeInput.OnBackspaceClick += BackspaceTimeString;
+        timeInput.OnCancelClick += OnCancel;
+        timeInput.OnAcceptClick += OnAccept;
         timeInput.Hide();
         timeString = "";
         timeNum = 0;
-	}
+    }
 
     public void GetTimeInput(AcceptDelegate onAccept, Action onCancel) {
         this.onAccept = onAccept;
@@ -30,29 +37,31 @@ public class TimeInputManager : MonoBehaviour {
         timeInput.Show();
     }
 
-    public void AddToTimeString(string numString) {
+    private void AddToTimeString(string numString) {
         if (!(numString == "0" && timeString.Length == 0)) {
             timeString = timeString + numString;
             timeInput.SetTimerText(timeString);
         }
     }
 
-    public void BackspaceTimeString() {
+    private void BackspaceTimeString() {
         if (timeString.Length > 0) {
             timeString = timeString.Substring(0, timeString.Length - 1);
             timeInput.SetTimerText(timeString);
         }
     }
 
-    public void OnAccept() {
+    private void OnAccept() {
         timeInput.Hide();
         ConvertTimeString();
-        onAccept(timeNum);
+        if (onAccept != null)
+            onAccept(timeNum);
     }
 
     public void OnCancel() {
         timeInput.Hide();
-        onCancel();
+        if (onCancel != null)
+            onCancel();
     }
 
     private void ConvertTimeString() {

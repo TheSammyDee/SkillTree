@@ -1,3 +1,4 @@
+using SkillTree.App;
 using SkillTree.Model;
 using SkillTree.Tests;
 using SkillTree.ViewModel;
@@ -10,15 +11,21 @@ namespace SkillTree
     public class Main : MonoBehaviour
     {
         [SerializeField]
-        SkillViewModel listSkillViewModelPrefab;
+        Prefabs prefabsPrefab;
+
+        [SerializeField]
+        Canvas canvas;
 
         [SerializeField]
         GameObject listViewAnchor;
 
         void Start()
         {
+            Prefabs prefabs = GameObject.Instantiate(prefabsPrefab);
+
+            TimeInputManager timeInput = new TimeInputManager(GameObject.Instantiate(prefabs.timeInputViewModel), canvas);
             SkillCollection skillCollection = new SkillCollection(new MockSkillsDataSource(), new MockLevelFormula());
-            SkillsListViewModel listViewModel = new SkillsListViewModel(listSkillViewModelPrefab, skillCollection, listViewAnchor);
+            SkillsListViewModel listViewModel = new SkillsListViewModel(skillCollection, timeInput, listViewAnchor);
         }
     }
 }

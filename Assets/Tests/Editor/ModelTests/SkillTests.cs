@@ -125,7 +125,7 @@ namespace SkillTree.Tests
         public void Skill_LevelRequirement()
         {
             Skill skill = BuildTestSkill();
-            Assert.AreEqual(180, skill.LevelCompletionRequirement());
+            Assert.AreEqual(180, skill.LevelCompletionRequirementTotal());
         }
 
         private bool fired;
@@ -137,7 +137,7 @@ namespace SkillTree.Tests
 
             ILevelFormula formula = new MockLevelFormula();
             Skill skill = new Skill("skill", formula);
-            skill.OnUpdated += () => { fired = true; };
+            skill.OnAmountUpdated += () => { fired = true; };
             Record r1 = new Record(DateTime.Today, 10f, skill);
             skill.AddRecords(new List<Record>() { r1 });
             Assert.IsTrue(fired);

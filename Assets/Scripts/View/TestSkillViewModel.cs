@@ -21,16 +21,14 @@ namespace SkillTree.ViewModel
         [SerializeField]
         private TextMeshProUGUI total;
 
-        private Skill skill;
-
         public override void Initialize(Skill skill)
         {
-            this.skill = skill;
+            base.Initialize(skill);
             nameText.text = skill.name;
-            UpdateData();
+            UpdateAmount();
         }
         
-        private void UpdateData()
+        protected override void UpdateAmount()
         {
             level.text = skill.Level().ToString();
             total.text = skill.Total().ToString();

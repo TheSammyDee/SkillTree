@@ -140,8 +140,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 325a191281782d9499ddb50b5c622332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listSkillViewModelPrefab: {fileID: 114023247739911942, guid: b8a2ec39300ec8a4c826f114cc3bd3e3,
+  prefabsPrefab: {fileID: 114343723063566626, guid: 7f8a54e41aa806f43a39e38e2407261a,
     type: 2}
+  canvas: {fileID: 285800391}
   listViewAnchor: {fileID: 1486950225}
 --- !u!4 &53127903
 Transform:
@@ -735,6 +736,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1486950226}
   - component: {fileID: 1486950227}
+  - component: {fileID: 1486950228}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -758,7 +760,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.00002427958}
-  m_SizeDelta: {x: 0, y: 300}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1486950227
 MonoBehaviour:
@@ -779,9 +781,22 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &1486950228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1486950225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 1
 --- !u!1 &1983147394
 GameObject:
   m_ObjectHideFlags: 0

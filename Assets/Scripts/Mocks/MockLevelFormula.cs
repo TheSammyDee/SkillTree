@@ -15,14 +15,19 @@ namespace SkillTree.Tests
         public float LevelProgress(float total)
         {
             int level = Level(total);
-            float previousLevels = LevelCompletionRequirement(level - 1);
+            float previousLevels = LevelCompletionRequirementTotal(level - 1);
 
             return total - previousLevels;
         }
 
-        public float LevelCompletionRequirement(int level)
+        public float LevelCompletionRequirementTotal(int level)
         {
             return 10 * level;
+        }
+
+        public float LevelCompletionRequirement(int level)
+        {
+            return LevelCompletionRequirementTotal(level) - LevelCompletionRequirementTotal(level - 1);
         }
     }
 }
