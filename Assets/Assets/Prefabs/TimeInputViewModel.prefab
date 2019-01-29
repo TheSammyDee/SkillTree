@@ -570,8 +570,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114557104357606190}
-        m_MethodName: OnNumberClickInternal
-        m_Mode: 5
+        m_MethodName: OnCancelClickInternal
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
