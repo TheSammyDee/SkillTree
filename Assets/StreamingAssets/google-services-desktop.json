@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "335400648801",
+    "firebase_url": "https://skill-tree-tracker.firebaseio.com",
+    "project_id": "skill-tree-tracker",
+    "storage_bucket": "skill-tree-tracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335400648801:android:af309dd8759c859e",
+        "android_client_info": {
+          "package_name": "com.TheSammyDee.SkillTree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335400648801-1fhdhtgoalgqnc12l93h8jkl9d2e3gu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMZOVwAkLBfegK4yr9N3QT3d871XUntII"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
