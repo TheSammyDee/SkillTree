@@ -2,6 +2,7 @@ using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
 using System;
+using System.Collections.Generic;
 
 namespace Utility
 {
@@ -49,9 +50,15 @@ namespace Utility
             reference.Child(userID).Child("Skills").Child(skillGuid).SetRawJsonValueAsync(json);
         }
 
-        public void WriteRecord(string date, string recordGuid, string json)
+        public void WriteRecord(string date, string recordGuid, float amount, string origin, List<string> skills)
         {
-            reference.Child(userID).Child("Records").Child(date).Child(recordGuid).SetRawJsonValueAsync(json);
+            reference.Child(userID).Child("Records").Child(date).Child(recordGuid).Child("amount").SetValueAsync(amount);
+            reference.Child(userID).Child("Records").Child(date).Child(recordGuid).Child("origin").SetValueAsync(origin);
+
+            foreach (string skill in skills)
+            {
+                reference.Child(userID).Child("Records").Child(date).Child(recordGuid).Child("skills").Child(skill).SetValueAsync(true);
+            }
         }
     }
 }

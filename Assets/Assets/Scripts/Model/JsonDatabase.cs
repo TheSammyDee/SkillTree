@@ -1,4 +1,5 @@
 using Firebase.Database;
+using SkillTree.Tests;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace SkillTree.Model
         private Dictionary<string, Skill> skills;
         private Dictionary<string, Record> records;
         private Dictionary<string, List<string>> skillParents;
+        ILevelFormula formula;
 
         private event Action OnDataReady;
 
@@ -22,6 +24,8 @@ namespace SkillTree.Model
             reader = new FirebaseReader(userId);
             skills = new Dictionary<string, Skill>();
             records = new Dictionary<string, Record>();
+            skillParents = new Dictionary<string, List<string>>();
+            formula = new MockLevelFormula();
         }
 
         private class RecordObject
@@ -59,13 +63,37 @@ namespace SkillTree.Model
         {
             this.OnDataReady = OnDataReady;
 
-            reader.Read("Skills", OnReceiveSkills, null);
+            Debugger.Instance.Log("checking Firebase");
+            Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+                var dependencyStatus = task.Result;
+                if (dependencyStatus == Firebase.DependencyStatus.Available)
+                {
+                    Debugger.Instance.Log("successful check, requesting skills");
+                    reader.Read("Skills", OnReceiveSkills, () => Debugger.Instance.Log("error requesting skills"));
+
+                    // Create and hold a reference to your FirebaseApp,
+                    // where app is a Firebase.FirebaseApp property of your application class.
+                    //   app = Firebase.FirebaseApp.DefaultInstance;
+
+                    // Set a flag here to indicate whether Firebase is ready to use by your app.
+                }
+                else
+                {
+                    Debugger.Instance.Log("error checking Firebase");
+                    UnityEngine.Debug.LogError(System.String.Format(
+                      "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+                    // Firebase Unity SDK is not safe to use here.
+                }
+            });
         }
 
         private void OnReceiveSkills(DataSnapshot snapshot)
         {
+            Debugger.Instance.Log("skills received");
+            Debugger.Instance.Log("key = " + snapshot.Key.ToString());
             object jsonList = snapshot.Value;
             var jsonDict = (Dictionary<string, object>)jsonList;
+            Debugger.Instance.Log("created dict");
 
             foreach (KeyValuePair<string, object> skillPair in jsonDict)
             {
@@ -74,40 +102,55 @@ namespace SkillTree.Model
 
             foreach (Skill skill in skills.Values)
             {
-                foreach (string parentId in skillParents[skill.guid])
+                if (skillParents.ContainsKey(skill.guid))
                 {
-                    skill.parents.Add(skills[parentId]);
+                    foreach (string parentId in skillParents[skill.guid])
+                    {
+                        skill.parents.Add(skills[parentId]);
+                    }
                 }
             }
-
-            reader.Read("Records", OnReceiveRecords, null);
+            Debugger.Instance.Log("requesting records");
+            reader.Read("Records", OnReceiveRecords, () => Debugger.Instance.Log("error receiving records"));
         }
 
         private void OnReceiveRecords(DataSnapshot snapshot)
         {
+            Debugger.Instance.Log("records received");
             object json = snapshot.Value;
-            var jsonDates = (Dictionary<string, object>)json;
 
-            foreach (KeyValuePair<string, object> datePair in jsonDates)
+            if (json != null)
             {
-                DateTime date = DateTime.Parse(datePair.Key);
+                var jsonDates = (Dictionary<string, object>)json;
 
-                var jsonRecords = (Dictionary<string, object>)datePair.Value;
-
-                foreach (KeyValuePair<string, object> recordPair in jsonRecords)
+                foreach (KeyValuePair<string, object> datePair in jsonDates)
                 {
+                    DateTime date = DateTime.Parse(datePair.Key);
 
+                    var jsonRecords = (Dictionary<string, object>)datePair.Value;
+
+                    foreach (KeyValuePair<string, object> recordPair in jsonRecords)
+                    {
+                        records.Add(recordPair.Key, CreateRecord(recordPair.Key, date, recordPair.Value));
+                    }
                 }
             }
+            Debugger.Instance.Log("data ready");
+            OnDataReady();
         }
 
         private Skill CreateSkill(string guid, object json)
         {
+            Debugger.Instance.Log("creating skill " + guid);
             var jsonSkill = (Dictionary<string, object>)json;
             string name = jsonSkill["name"].ToString();
 
-            var jsonColor = (Dictionary<string, float>)jsonSkill["color"];
-            Color color = new Color(jsonColor["r"], jsonColor["g"], jsonColor["b"]);
+            var jsonColor = (Dictionary<string, object>)jsonSkill["color"];
+            Color color = new Color(
+                Convert.ToSingle(jsonColor["r"]), 
+                Convert.ToSingle(jsonColor["g"]), 
+                Convert.ToSingle(jsonColor["b"])
+                );
 
             if (jsonSkill.ContainsKey("parents"))
             {
@@ -120,19 +163,34 @@ namespace SkillTree.Model
                 }
             }
 
-            return new Skill(guid, name, color, new HashSet<Skill>());
+            Debugger.Instance.Log("skill complete " + name);
+            return new Skill(guid, name, formula, color, new HashSet<Skill>());
         }
 
-        private void CreateRecord(string guid, DateTime date, object json)
+        private Record CreateRecord(string guid, DateTime date, object json)
         {
+            Debugger.Instance.Log("creating record " + guid);
+            var jsonRecord = (Dictionary<string, object>)json;
+            float amount = Convert.ToSingle(jsonRecord["amount"]);
+            string origin = (string)jsonRecord["origin"];
+            Record record = new Record(guid, date, amount, origin);
 
+            var jsonSkills = (Dictionary<string, object>)jsonRecord["skills"];
+
+            foreach (string id in jsonSkills.Keys)
+            {
+                record.skills.Add(skills[id]);
+                skills[id].AddRecord(record);
+            }
+
+            Debugger.Instance.Log("created record");
+            return record;
         }
 
         public void AddRecord(Record record)
         {
-            RecordObject recordObject = new RecordObject(record);
-            string json = JsonUtility.ToJson(recordObject);
-            reader.WriteRecord(record.date.ToShortDateString(), record.guid, json);
+            string date = String.Format("{0:yyyy'-'MM'-'dd}", record.date);
+            reader.WriteRecord(date, record.guid, record.amount, record.originGuid, record.skills.Select(x => x.guid).ToList());
         }
 
         public void AddSkill(Skill skill)
@@ -152,12 +210,12 @@ namespace SkillTree.Model
 
         public Dictionary<string, Record> GetAllRecords()
         {
-            throw new System.NotImplementedException();
+            return records;
         }
 
         public Dictionary<string, Skill> GetAllSkills()
         {
-            throw new System.NotImplementedException();
+            return skills;
         }
 
         public void UpdateRecord(Record record)

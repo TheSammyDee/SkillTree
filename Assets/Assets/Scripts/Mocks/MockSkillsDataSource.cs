@@ -1,4 +1,5 @@
 using SkillTree.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,26 +49,24 @@ namespace SkillTree.Tests
             records = new Dictionary<string, Record>();
         }
 
-        public bool AddRecord(Record record)
+        public void AddRecord(Record record)
         {
             records.Add(record.guid, record);
-            return true;
         }
 
-        public bool AddSkill(Skill skill)
+        public void AddSkill(Skill skill)
         {
             skills.Add(skill.guid, skill);
-            return true;
         }
 
-        public bool DeleteRecord(Record record)
+        public void DeleteRecord(Record record)
         {
-            return records.Remove(record.guid);
+            records.Remove(record.guid);
         }
 
-        public bool DeleteSkill(Skill skill)
+        public void DeleteSkill(Skill skill)
         {
-            return skills.Remove(skill.guid);
+            skills.Remove(skill.guid);
         }
 
         public Dictionary<string, Record> GetAllRecords()
@@ -80,29 +79,24 @@ namespace SkillTree.Tests
             return skills;
         }
 
-        public bool UpdateRecord(Record record)
+        public void PrepareData(Action OnDataReady)
+        {
+            
+        }
+
+        public void UpdateRecord(Record record)
         {
             if (records.ContainsKey(record.guid))
             {
                 records[record.guid] = record;
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
-        public bool UpdateSkill(Skill skill)
+        public void UpdateSkill(Skill skill)
         {
             if (skills.ContainsKey(skill.guid))
             {
                 skills[skill.guid] = skill;
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
     }

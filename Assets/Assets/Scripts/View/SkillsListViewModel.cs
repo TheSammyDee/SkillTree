@@ -20,14 +20,7 @@ namespace SkillTree.ViewModel
             this.timeInput = timeInput;
             viewModels = new List<SkillViewModel>();
             this.skillCollection = skillCollection;
-
-            foreach (Skill skill in skillCollection.skills.Values)
-            {
-                SkillViewModel viewModel = GameObject.Instantiate(Prefabs.Instance.listSkillViewModelPrefab);
-                viewModel.Initialize(skill);
-                viewModel.gameObject.transform.SetParent(anchor.transform);
-                viewModel.OnAddButtonClicked += NewRecordTimeInput;
-            }
+            skillCollection.OnSkillAdded += NewSkill;
         }
 
         private void NewRecordTimeInput(Skill skill)
@@ -38,6 +31,14 @@ namespace SkillTree.ViewModel
         private void CreateNewRecord(Skill skill, float amount)
         {
             skillCollection.AddRecord(DateTime.Today, amount, skill);
+        }
+
+        private void NewSkill(Skill skill)
+        {
+            SkillViewModel viewModel = GameObject.Instantiate(Prefabs.Instance.listSkillViewModelPrefab);
+            viewModel.Initialize(skill);
+            viewModel.gameObject.transform.SetParent(anchor.transform);
+            viewModel.OnAddButtonClicked += NewRecordTimeInput;
         }
     }
 }

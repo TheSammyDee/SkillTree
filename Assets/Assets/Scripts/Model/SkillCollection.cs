@@ -13,33 +13,15 @@ namespace SkillTree.Model
         public Dictionary<string, Skill> skills { get; private set; }
         private Dictionary<string, Record> records;
         private ILevelFormula formula;
-
+        
         public event Action<Skill> OnSkillAdded;
 
         public SkillCollection(ISkillsDataSource dataSource, ILevelFormula formula)
         {
             this.dataSource = dataSource;
             this.formula = formula;
-            skills = dataSource.GetAllSkills();
-            records = dataSource.GetAllRecords();
-            //Dictionary<string, HashSet<string>> recordSkillMappings = dataSource.GetRecordSkillMappings();
-
-            //foreach (string recordGuid in recordSkillMappings.Keys)
-            //{
-            //    Record record = records.Where(x => x.guid == recordGuid).First();
-            //    HashSet<Skill> skillSet = new HashSet<Skill>();
-            //    foreach(string skillGuid in recordSkillMappings[recordGuid])
-            //    {
-            //        Skill sk = skills.Where(x => x.guid == skillGuid).First();
-            //        record.AddSkill(sk);
-            //        sk.AddRecord(record);
-            //    }
-            //}
-
-            //foreach (Skill skill in skills)
-            //{
-            //    skill.formula = formula;
-            //}
+            Debug.Log("sent for data " + Time.time);
+            dataSource.PrepareData(GetData);
         }
 
         public void AddSkill(string name, Color color, List<Skill> parents)
@@ -67,6 +49,21 @@ namespace SkillTree.Model
             }
 
             dataSource.AddRecord(newRecord);
+        }
+
+        private void GetData()
+        {
+            Debug.Log("received data " + Time.time);
+            skills = dataSource.GetAllSkills();
+            records = dataSource.GetAllRecords();
+
+            if (OnSkillAdded != null)
+            {
+                foreach (Skill skill in skills.Values)
+                {
+                    OnSkillAdded(skill);
+                }
+            }
         }
     }
 }
