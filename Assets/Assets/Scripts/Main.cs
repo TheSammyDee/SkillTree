@@ -12,6 +12,9 @@ namespace SkillTree
     public class Main : MonoBehaviour
     {
         [SerializeField]
+        bool staging;
+
+        [SerializeField]
         Prefabs prefabsPrefab;
 
         [SerializeField]
@@ -23,9 +26,10 @@ namespace SkillTree
         void Start()
         {
             Prefabs prefabs = GameObject.Instantiate(prefabsPrefab);
+            string user = staging ? "test" : "TheSammyDee";
 
             TimeInputManager timeInput = new TimeInputManager(GameObject.Instantiate(prefabs.timeInputViewModel), canvas);
-            SkillCollection skillCollection = new SkillCollection(new JsonDatabase("TheSammyDee"), new MockLevelFormula());
+            SkillCollection skillCollection = new SkillCollection(new JsonDatabase(user), new MockLevelFormula());
             SkillsListViewModel listViewModel = new SkillsListViewModel(skillCollection, timeInput, listViewAnchor);
         }
     }

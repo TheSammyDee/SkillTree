@@ -25,6 +25,7 @@ namespace SkillTree.ViewModel
         {
             base.Initialize(skill);
             nameText.text = skill.name;
+            bar.color = skill.CalculatedColor();
             UpdateAmount();
         }
         

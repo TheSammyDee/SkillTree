@@ -215,5 +215,32 @@ namespace SkillTree.Model
         {
             return formula.LevelCompletionRequirement(Level());
         }
+
+        public Color CalculatedColor()
+        {
+            if (parents.Count == 0)
+            {
+                return color;
+            }
+            else
+            {
+                float r = 0;
+                float g = 0;
+                float b = 0;
+
+                foreach (Skill parent in parents)
+                {
+                    r += parent.CalculatedColor().r;
+                    g += parent.CalculatedColor().g;
+                    b += parent.CalculatedColor().b;
+                }
+
+                r /= parents.Count;
+                g /= parents.Count;
+                b /= parents.Count;
+
+                return new Color(r, g, b);
+            }
+        }
     }
 }

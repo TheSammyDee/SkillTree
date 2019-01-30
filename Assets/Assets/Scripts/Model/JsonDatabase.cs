@@ -145,12 +145,20 @@ namespace SkillTree.Model
             var jsonSkill = (Dictionary<string, object>)json;
             string name = jsonSkill["name"].ToString();
 
-            var jsonColor = (Dictionary<string, object>)jsonSkill["color"];
-            Color color = new Color(
-                Convert.ToSingle(jsonColor["r"]), 
-                Convert.ToSingle(jsonColor["g"]), 
-                Convert.ToSingle(jsonColor["b"])
-                );
+            Color color;
+            if (jsonSkill.ContainsKey("color"))
+            {
+                var jsonColor = (Dictionary<string, object>)jsonSkill["color"];
+                color = new Color(
+                    Convert.ToSingle(jsonColor["r"]),
+                    Convert.ToSingle(jsonColor["g"]),
+                    Convert.ToSingle(jsonColor["b"])
+                    );
+            }
+            else
+            {
+                color = Color.white;
+            }
 
             if (jsonSkill.ContainsKey("parents"))
             {
