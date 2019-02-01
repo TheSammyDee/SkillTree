@@ -202,7 +202,7 @@ namespace SkillTree.Model
         }
 
         /// <summary>
-        /// Returns the value required to complete the current level
+        /// Returns the total value required to complete the current level
         /// and reach the next level
         /// </summary>
         /// <returns></returns>
@@ -211,6 +211,11 @@ namespace SkillTree.Model
             return formula.LevelCompletionRequirementTotal(Level());
         }
 
+        /// <summary>
+        /// Returns the value required to go from the current level
+        /// to the next level.
+        /// </summary>
+        /// <returns></returns>
         public float LevelCompletionRequirement()
         {
             return formula.LevelCompletionRequirement(Level());

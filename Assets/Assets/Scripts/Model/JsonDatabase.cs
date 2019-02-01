@@ -19,13 +19,13 @@ namespace SkillTree.Model
 
         private event Action OnDataReady;
 
-        public JsonDatabase(string userId)
+        public JsonDatabase(string userId, ILevelFormula formula)
         {
             reader = new FirebaseReader(userId);
             skills = new Dictionary<string, Skill>();
             records = new Dictionary<string, Record>();
             skillParents = new Dictionary<string, List<string>>();
-            formula = new MockLevelFormula();
+            this.formula = formula;
         }
 
         private class RecordObject

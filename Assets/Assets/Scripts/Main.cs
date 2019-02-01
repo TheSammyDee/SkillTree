@@ -27,9 +27,10 @@ namespace SkillTree
         {
             Prefabs prefabs = GameObject.Instantiate(prefabsPrefab);
             string user = staging ? "test" : "TheSammyDee";
+            ILevelFormula formula = new Quadratic500LevelFormula();
 
             TimeInputManager timeInput = new TimeInputManager(GameObject.Instantiate(prefabs.timeInputViewModel), canvas);
-            SkillCollection skillCollection = new SkillCollection(new JsonDatabase(user), new MockLevelFormula());
+            SkillCollection skillCollection = new SkillCollection(new JsonDatabase(user, formula), formula);
             SkillsListViewModel listViewModel = new SkillsListViewModel(skillCollection, timeInput, listViewAnchor);
         }
     }
