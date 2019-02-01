@@ -7,6 +7,21 @@ namespace SkillTree.Model
     public interface ILevelFormula
     {
         /// <summary>
+        /// Returns the <paramref name="minutes"/> converted from base minutes
+        /// to this <see cref="ILevelFormula"/>'s units.
+        /// </summary>
+        /// <param name="minutes"></param>
+        /// <returns></returns>
+        float BaseMinutesToUnits(float minutes);
+
+        /// <summary>
+        /// Converts the amount given from this <see cref="ILevelFormula"/>'s units to base minutes.
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        float UnitsToBaseMinutes(float amount);
+
+        /// <summary>
         /// Returns the current level based on the given total.
         /// </summary>
         /// <param name="total"></param>

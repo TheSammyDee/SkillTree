@@ -29,5 +29,15 @@ namespace SkillTree.Tests
         {
             return LevelCompletionRequirementTotal(level) - LevelCompletionRequirementTotal(level - 1);
         }
+
+        public float BaseMinutesToUnits(float minutes)
+        {
+            return minutes;
+        }
+
+        public float UnitsToBaseMinutes(float amount)
+        {
+            return amount;
+        }
     }
 }

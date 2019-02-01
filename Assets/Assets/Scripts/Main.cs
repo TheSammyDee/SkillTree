@@ -27,10 +27,14 @@ namespace SkillTree
         {
             Prefabs prefabs = GameObject.Instantiate(prefabsPrefab);
             string user = staging ? "test" : "TheSammyDee";
-            ILevelFormula formula = new Quadratic500LevelFormula();
+            ILevelFormula minutesFormula = new Quadratic500LevelFormula();
+            ILevelFormula countableFormula = new CountableLevelFormula(20, minutesFormula);
 
             TimeInputManager timeInput = new TimeInputManager(GameObject.Instantiate(prefabs.timeInputViewModel), canvas);
-            SkillCollection skillCollection = new SkillCollection(new JsonDatabase(user, formula), formula);
+            SkillCollection skillCollection = new SkillCollection(
+                new JsonDatabase(user, minutesFormula, countableFormula), 
+                minutesFormula, 
+                countableFormula);
             SkillsListViewModel listViewModel = new SkillsListViewModel(skillCollection, timeInput, listViewAnchor);
         }
     }

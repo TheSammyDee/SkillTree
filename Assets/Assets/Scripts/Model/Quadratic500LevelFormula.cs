@@ -25,5 +25,15 @@ namespace SkillTree.Model
         {
             return total - LevelCompletionRequirementTotal(Level(total) - 1);
         }
+
+        public float BaseMinutesToUnits(float minutes)
+        {
+            return minutes;
+        }
+
+        public float UnitsToBaseMinutes(float amount)
+        {
+            return amount;
+        }
     }
 }

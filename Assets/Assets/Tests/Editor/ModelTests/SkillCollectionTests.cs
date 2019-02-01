@@ -14,7 +14,7 @@ namespace SkillTree.Tests
         public void SkillCollection_AddRecord()
         {
             ISkillsDataSource database = new MockSkillsDataSource();
-            SkillCollection skillCollection = new SkillCollection(database, new MockLevelFormula());
+            SkillCollection skillCollection = new SkillCollection(database, new MockLevelFormula(), new MockLevelFormula());
             Dictionary<string, Skill> skills = database.GetAllSkills();
 
             Skill a = skills["a"];
@@ -42,7 +42,7 @@ namespace SkillTree.Tests
         public void SkillCollection_AddSkill()
         {
             ISkillsDataSource database = new MockSkillsDataSource();
-            SkillCollection skillCollection = new SkillCollection(database, new MockLevelFormula());
+            SkillCollection skillCollection = new SkillCollection(database, new MockLevelFormula(), new MockLevelFormula());
             Dictionary<string, Skill> skills = database.GetAllSkills();
 
             Skill f = skills["f"];

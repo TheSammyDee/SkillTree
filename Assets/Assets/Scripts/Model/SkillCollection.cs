@@ -12,21 +12,23 @@ namespace SkillTree.Model
         private ISkillsDataSource dataSource;
         public Dictionary<string, Skill> skills { get; private set; }
         private Dictionary<string, Record> records;
-        private ILevelFormula formula;
+        private ILevelFormula minutesFormula;
+        private ILevelFormula countableFormula;
         
         public event Action<Skill> OnSkillAdded;
 
-        public SkillCollection(ISkillsDataSource dataSource, ILevelFormula formula)
+        public SkillCollection(ISkillsDataSource dataSource, ILevelFormula minutesFormula, ILevelFormula countableFormula)
         {
             this.dataSource = dataSource;
-            this.formula = formula;
-            Debug.Log("sent for data " + Time.time);
+            this.minutesFormula = minutesFormula;
+            this.countableFormula = countableFormula;
             dataSource.PrepareData(GetData);
         }
 
-        public void AddSkill(string name, Color color, List<Skill> parents)
+        public void AddSkill(string name, Color color, List<Skill> parents, bool isCountable = false)
         {
-            Skill newSkill = new Skill(name, formula);
+            ILevelFormula formula = isCountable ? countableFormula : minutesFormula;
+            Skill newSkill = new Skill(name, formula, isCountable);
             newSkill.color = color;
             foreach (Skill skill in parents)
             {
@@ -41,6 +43,10 @@ namespace SkillTree.Model
 
         public void AddRecord(DateTime date, float amount, Skill skill)
         {
+            if (skill.isCountable)
+            {
+                amount = countableFormula.UnitsToBaseMinutes(amount);
+            }
             Record newRecord = new Record(date, amount, skill);
 
             foreach (Skill recSkill in newRecord.skills)

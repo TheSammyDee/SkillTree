@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
 namespace SkillTree.ViewModel
 {
@@ -33,6 +34,11 @@ namespace SkillTree.ViewModel
         {
             level.text = skill.Level().ToString();
             total.text = skill.Total().ToString();
+            if (skill.isCountable)
+            {
+                Debugger.Instance.Log("level progress " + skill.LevelProgress());
+                Debugger.Instance.Log("level completion requirement " + skill.LevelCompletionRequirement());
+            }
             bar.fillAmount = skill.LevelProgress() / skill.LevelCompletionRequirement();
         }
     }

@@ -15,17 +15,19 @@ namespace SkillTree.Model
         private Dictionary<string, Skill> skills;
         private Dictionary<string, Record> records;
         private Dictionary<string, List<string>> skillParents;
-        ILevelFormula formula;
+        ILevelFormula minutesFormula;
+        ILevelFormula countableFormula;
 
         private event Action OnDataReady;
 
-        public JsonDatabase(string userId, ILevelFormula formula)
+        public JsonDatabase(string userId, ILevelFormula minutesFormula, ILevelFormula countableFormula)
         {
             reader = new FirebaseReader(userId);
             skills = new Dictionary<string, Skill>();
             records = new Dictionary<string, Record>();
             skillParents = new Dictionary<string, List<string>>();
-            this.formula = formula;
+            this.minutesFormula = minutesFormula;
+            this.countableFormula = countableFormula;
         }
 
         private class RecordObject
@@ -171,8 +173,11 @@ namespace SkillTree.Model
                 }
             }
 
+            bool countable = jsonSkill.ContainsKey("countable") && (Boolean)jsonSkill["countable"];
+            ILevelFormula formula = countable ? countableFormula : minutesFormula;
+
             Debugger.Instance.Log("skill complete " + name);
-            return new Skill(guid, name, formula, color, new HashSet<Skill>());
+            return new Skill(guid, name, formula, color, new HashSet<Skill>(), countable);
         }
 
         private Record CreateRecord(string guid, DateTime date, object json)

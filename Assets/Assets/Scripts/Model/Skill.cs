@@ -14,11 +14,12 @@ namespace SkillTree.Model
         public Color color { get; set; }
         public HashSet<Skill> parents { get; private set; }
         public List<Record> records { get; private set; }
-        public ILevelFormula formula { get; set; }
+        private ILevelFormula formula;
+        public bool isCountable { get; private set; }
 
         public UnityAction OnAmountUpdated;
 
-        public Skill(string name, ILevelFormula formula)
+        public Skill(string name, ILevelFormula formula, bool isCountable = false)
         {
             guid = Guid.NewGuid().ToString();
             this.name = name;
@@ -26,18 +27,20 @@ namespace SkillTree.Model
             parents = new HashSet<Skill>();
             records = new List<Record>();
             color = Color.white;
+            this.isCountable = isCountable;
         }
 
-        public Skill(string guid, string name, Color color, HashSet<Skill> parents)
+        public Skill(string guid, string name, Color color, HashSet<Skill> parents, bool isCountable = false)
         {
             this.guid = guid;
             this.name = name;
             this.color = color;
             this.parents = parents;
             records = new List<Record>();
+            this.isCountable = isCountable;
         }
 
-        public Skill(string guid, string name, ILevelFormula formula, Color color, HashSet<Skill> parents)
+        public Skill(string guid, string name, ILevelFormula formula, Color color, HashSet<Skill> parents, bool isCountable = false)
         {
             this.guid = guid;
             this.name = name;
@@ -45,6 +48,7 @@ namespace SkillTree.Model
             this.color = color;
             this.parents = parents;
             records = new List<Record>();
+            this.isCountable = isCountable;
         }
 
         /// <summary>
@@ -178,7 +182,7 @@ namespace SkillTree.Model
         /// <returns></returns>
         public float Total()
         {
-            return records.Sum(x => x.amount);
+            return formula.BaseMinutesToUnits(records.Sum(x => x.amount));
         }
 
         // TODO: Improve efficiency here with repeated calculations
