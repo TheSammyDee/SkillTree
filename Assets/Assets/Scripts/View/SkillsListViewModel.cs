@@ -10,6 +10,7 @@ namespace SkillTree.ViewModel
     public class SkillsListViewModel
     {
         private List<SkillViewModel> viewModels;
+        private List<RecordViewModel> recordViewModels;
         private GameObject anchor;
         private TimeInputManager timeInput;
         SkillCollection skillCollection;
@@ -19,6 +20,7 @@ namespace SkillTree.ViewModel
             this.anchor = anchor;
             this.timeInput = timeInput;
             viewModels = new List<SkillViewModel>();
+            recordViewModels = new List<RecordViewModel>();
             this.skillCollection = skillCollection;
             skillCollection.OnSkillAdded += NewSkill;
         }
@@ -44,7 +46,11 @@ namespace SkillTree.ViewModel
 
         private void SeeRecords(Skill skill)
         {
-
+            foreach (SkillViewModel vm in viewModels)
+            {
+                vm.Destroy();
+            }
+            viewModels.Clear();
         }
     }
 }

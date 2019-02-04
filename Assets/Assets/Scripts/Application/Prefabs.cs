@@ -14,6 +14,11 @@ namespace SkillTree.App
         public SkillViewModel listSkillViewModelPrefab { get { return _listSkillViewModelPrefab; } }
 
         [SerializeField]
+        private RecordViewModel _listRecordViewModelPrefab;
+
+        public RecordViewModel listRecordViewModelPrefab { get { return _listRecordViewModelPrefab; } }
+
+        [SerializeField]
         private TimeInputViewModel _timeInputViewModelPrefab;
 
         public TimeInputViewModel timeInputViewModel { get { return _timeInputViewModelPrefab; } }

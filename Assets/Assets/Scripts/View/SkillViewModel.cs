@@ -18,6 +18,12 @@ namespace SkillTree.ViewModel
             skill.OnAmountUpdated += UpdateAmount;
         }
 
+        public virtual void Destroy()
+        {
+            skill.OnAmountUpdated -= UpdateAmount;
+            GameObject.Destroy(this);
+        }
+
         public void OnAddButtonClickedInternal()
         {
             if (OnAddButtonClicked != null)

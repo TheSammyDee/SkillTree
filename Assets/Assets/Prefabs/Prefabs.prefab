@@ -53,5 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _listSkillViewModelPrefab: {fileID: 114023247739911942, guid: b8a2ec39300ec8a4c826f114cc3bd3e3,
     type: 2}
+  _listRecordViewModelPrefab: {fileID: 114218742234989344, guid: 7c53f4aa1398c624f8daa2d24db541d6,
+    type: 2}
   _timeInputViewModelPrefab: {fileID: 114557104357606190, guid: 6d0cf7dc38381724081082d128b8f451,
     type: 2}

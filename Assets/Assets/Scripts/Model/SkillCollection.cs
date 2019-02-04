@@ -35,6 +35,7 @@ namespace SkillTree.Model
                 newSkill.AddParent(skill);
             }
 
+            skills.Add(newSkill.guid, newSkill);
             dataSource.AddSkill(newSkill);
 
             if (OnSkillAdded != null)
@@ -55,6 +56,11 @@ namespace SkillTree.Model
             }
 
             dataSource.AddRecord(newRecord);
+        }
+
+        public List<Record> GetRecordsForSkill(Skill skill)
+        {
+
         }
 
         private void GetData()

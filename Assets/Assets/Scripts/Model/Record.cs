@@ -13,6 +13,8 @@ namespace SkillTree.Model
         public HashSet<Skill> skills { get; private set; }
         public string originGuid { get; set; }
 
+        public event Action OnAmountUpdated;
+
         public Record(DateTime date, float amount, string originGuid)
         {
             guid = Guid.NewGuid().ToString();
@@ -51,6 +53,14 @@ namespace SkillTree.Model
         public void AddSkill(Skill skill)
         {
             skills.Add(skill);
+        }
+
+        public void UpdateAmount(float amount)
+        {
+            this.amount = amount;
+
+            if (OnAmountUpdated != null)
+                OnAmountUpdated();
         }
     }
 }
