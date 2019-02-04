@@ -39,6 +39,12 @@ namespace SkillTree.ViewModel
             viewModel.Initialize(skill);
             viewModel.gameObject.transform.SetParent(anchor.transform);
             viewModel.OnAddButtonClicked += NewRecordTimeInput;
+            viewModel.OnSeeRecordsClicked += SeeRecords;
+        }
+
+        private void SeeRecords(Skill skill)
+        {
+
         }
     }
 }

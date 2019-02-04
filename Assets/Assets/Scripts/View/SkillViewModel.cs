@@ -9,6 +9,7 @@ namespace SkillTree.ViewModel
     public abstract class SkillViewModel : MonoBehaviour
     {
         public event Action<Skill> OnAddButtonClicked;
+        public event Action<Skill> OnSeeRecordsClicked;
         protected Skill skill;
 
         public virtual void Initialize(Skill skill)
@@ -21,6 +22,12 @@ namespace SkillTree.ViewModel
         {
             if (OnAddButtonClicked != null)
                 OnAddButtonClicked(skill);
+        }
+
+        public void OnSeeRecordsClickedInternal()
+        {
+            if (OnSeeRecordsClicked != null)
+                OnSeeRecordsClicked(skill);
         }
 
         protected virtual void UpdateAmount() { }
