@@ -8,7 +8,7 @@ namespace SkillTree.ViewModel
 {
     public abstract class RecordViewModel : MonoBehaviour
     {
-        public event Action<Record> OnEditButtonClicked;
+        public event Action<string> OnEditButtonClicked;
         public event Action<Record> OnDeleteButtonClicked;
         protected Record record;
 
@@ -29,7 +29,7 @@ namespace SkillTree.ViewModel
         protected void OnEditButtonClickedInternal()
         {
             if (OnEditButtonClicked != null)
-                OnEditButtonClicked(record);
+                OnEditButtonClicked(record.guid);
         }
 
         protected void OnDeleteButtonClickedInternal()

@@ -233,7 +233,8 @@ namespace SkillTree.Model
 
         public void UpdateRecord(Record record)
         {
-            throw new System.NotImplementedException();
+            string date = String.Format("{0:yyyy'-'MM'-'dd}", record.date);
+            reader.WriteRecord(date, record.guid, record.amount, record.originGuid, record.skills.Select(x => x.guid).ToList());
         }
 
         public void UpdateSkill(Skill skill)

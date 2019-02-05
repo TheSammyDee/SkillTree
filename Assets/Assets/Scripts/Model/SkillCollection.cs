@@ -55,12 +55,18 @@ namespace SkillTree.Model
                 recSkill.AddRecord(newRecord);
             }
 
+            records.Add(newRecord.guid, newRecord);
             dataSource.AddRecord(newRecord);
         }
 
-        public List<Record> GetRecordsForSkill(Skill skill)
+        public void EditRecord(string guid, float amount)
         {
+            Record record = records[guid];
 
+            // TODO: compare amount to see if it has changed with epsilon
+
+            record.UpdateAmount(amount);
+            dataSource.UpdateRecord(record);
         }
 
         private void GetData()

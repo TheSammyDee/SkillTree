@@ -51,6 +51,24 @@ namespace SkillTree.ViewModel
                 vm.Destroy();
             }
             viewModels.Clear();
+
+            foreach (Record record in skill.records)
+            {
+                RecordViewModel viewModel = GameObject.Instantiate(Prefabs.Instance.listRecordViewModelPrefab);
+                viewModel.Initialize(record);
+                viewModel.gameObject.transform.SetParent(anchor.transform);
+                viewModel.OnEditButtonClicked += EditRecordTimeInput;
+            }
+        }
+
+        private void EditRecordTimeInput(string guid)
+        {
+            timeInput.GetTimeInput((x) => EditRecord(guid, (float)x), null);
+        }
+
+        private void EditRecord(string guid, float amount)
+        {
+
         }
     }
 }
