@@ -21,7 +21,7 @@ namespace SkillTree.ViewModel
         public virtual void Destroy()
         {
             record.OnAmountUpdated -= UpdateAmount;
-            GameObject.Destroy(this);
+            GameObject.Destroy(gameObject);
         }
 
         protected virtual void UpdateAmount() { }

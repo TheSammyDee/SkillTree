@@ -21,7 +21,7 @@ namespace SkillTree.ViewModel
         public virtual void Destroy()
         {
             skill.OnAmountUpdated -= UpdateAmount;
-            GameObject.Destroy(this);
+            GameObject.Destroy(gameObject);
         }
 
         public void OnAddButtonClickedInternal()

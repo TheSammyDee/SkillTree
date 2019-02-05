@@ -42,6 +42,7 @@ namespace SkillTree.ViewModel
             viewModel.gameObject.transform.SetParent(anchor.transform);
             viewModel.OnAddButtonClicked += NewRecordTimeInput;
             viewModel.OnSeeRecordsClicked += SeeRecords;
+            viewModels.Add(viewModel);
         }
 
         private void SeeRecords(Skill skill)
@@ -63,12 +64,7 @@ namespace SkillTree.ViewModel
 
         private void EditRecordTimeInput(string guid)
         {
-            timeInput.GetTimeInput((x) => EditRecord(guid, (float)x), null);
-        }
-
-        private void EditRecord(string guid, float amount)
-        {
-
+            timeInput.GetTimeInput((x) => skillCollection.EditRecord(guid, (float)x), null);
         }
     }
 }
